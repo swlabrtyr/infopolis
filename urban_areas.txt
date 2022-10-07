@@ -1,0 +1,7 @@
+Parent Id -> "04e346c1-2240-4f04-babd-a299762ca89b"
+Child originalPresetId  -> "c12d59c5-877f-48cf-93e3-3dad40167717"
+
+F4GZM259N735
+
+
+/Users/bandlab/bandlab-android/app/build/outputs/apk/stage/debug

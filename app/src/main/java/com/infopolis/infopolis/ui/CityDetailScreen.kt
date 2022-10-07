@@ -107,6 +107,7 @@ fun ScoreList(
                     .fillMaxWidth()
                     .padding(horizontal = 15.dp),
                 text = category.name,
+                fontSize = 30.sp,
                 color = Color.White,
                 textAlign = TextAlign.Left
             )
