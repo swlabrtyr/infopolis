@@ -11,14 +11,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.infopolis.infopolis.CITY_DETAIL_SCREEN
+import com.infopolis.infopolis.data.model.CitiesListViewModel
 import com.infopolis.infopolis.data.model.CityInfo
-import com.infopolis.infopolis.data.model.ListViewModel
 import com.infopolis.infopolis.util.encodeUrl
 
 @Composable
-fun CitiesList(
+fun FavoriteCitiesList(
+    viewModel: CitiesListViewModel,
     navController: NavController,
-    favoritesListViewModel: ListViewModel,
     cities: List<CityInfo>
 ) {
     LazyColumn(
@@ -33,8 +33,8 @@ fun CitiesList(
                 imageUrl = city.imageUrl,
                 isFavorite = city.isFavorite.value,
                 onFavorite = {
-                    favoritesListViewModel.addCityToFavorites(city)
-                    city.isFavorite.value = true
+                    viewModel.removeCityFromFavorites(city)
+                    city.isFavorite.value = false
                 },
                 onSelect = {
                     navController.navigate(
@@ -45,4 +45,3 @@ fun CitiesList(
         }
     }
 }
-

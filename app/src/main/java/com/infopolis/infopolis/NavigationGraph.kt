@@ -8,7 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.infopolis.infopolis.ui.CityDetailScreen
-import com.infopolis.infopolis.ui.CitySearchListScreen
+import com.infopolis.infopolis.ui.InfopolisUi
 
 const val CITY_LIST_SCREEN = "cities_list"
 const val CITY_DETAIL_SCREEN = "city_detail"
@@ -42,9 +42,9 @@ fun NavigationGraph(navController: NavHostController) {
         }
 
         composable(route = CITY_LIST_SCREEN) {
-            CitySearchListScreen(
-                viewModel = hiltViewModel(),
-                navController = navController
+            InfopolisUi(
+                citiesListViewModel = hiltViewModel(),
+                navController = navController,
             )
         }
     }
