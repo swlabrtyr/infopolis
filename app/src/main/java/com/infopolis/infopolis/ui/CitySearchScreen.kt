@@ -26,9 +26,11 @@ fun InfopolisUi(
     citiesListViewModel: CitiesListViewModel,
     navController: NavController
 ) {
-    var selectedBottomTab by remember { mutableStateOf(0) }
     val cities by citiesListViewModel.citiesList.collectAsState()
     val favorites by citiesListViewModel.favCitiesList.collectAsState()
+
+    var selectedBottomTab by remember { mutableStateOf(0) }
+
     Scaffold(
         topBar = {
             val textSearch by citiesListViewModel.textSearch.collectAsState()
@@ -90,9 +92,14 @@ fun InfopolisUi(
                 } else {
                     CitiesList(
                         navController = navController,
-                        citiesListViewModel,
                         cities = cities!!
-                    )
+                    ) { city ->
+                        if (city.isFavorite.value) {
+                            citiesListViewModel.removeCityFromFavorites(city)
+                        } else {
+                            citiesListViewModel.addCityToFavorites(city)
+                        }
+                    }
                 }
             }
         } else {
@@ -103,11 +110,16 @@ fun InfopolisUi(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceEvenly,
             ) {
-                FavoriteCitiesList(
-                    viewModel = citiesListViewModel,
+                CitiesList(
                     navController = navController,
-                    cities = favorites.distinct()
-                )
+                    cities = favorites,
+                ) { city ->
+                    if (city.isFavorite.value) {
+                        citiesListViewModel.removeCityFromFavorites(city)
+                    } else {
+                        citiesListViewModel.addCityToFavorites(city)
+                    }
+                }
             }
         }
     }

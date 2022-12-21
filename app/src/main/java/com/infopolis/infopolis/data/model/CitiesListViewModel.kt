@@ -31,8 +31,13 @@ class CitiesListViewModel @Inject constructor(private val repository: CityInfoRe
     private val _favCitiesList = MutableStateFlow(mutableListOf<CityInfo>())
     val favCitiesList: StateFlow<List<CityInfo>> = _favCitiesList.asStateFlow()
 
-    override fun addCityToFavorites(city: CityInfo) = _favCitiesList.value.add(city)
+    override fun addCityToFavorites(city: CityInfo): Boolean {
+        city.isFavorite.value = true
+        return _favCitiesList.value.add(city)
+    }
+
     override fun removeCityFromFavorites(city: CityInfo) {
+        city.isFavorite.value = false
         val updatedList = _favCitiesList.value.filter { it.id != city.id }
         _favCitiesList.value = updatedList as MutableList<CityInfo>
     }
