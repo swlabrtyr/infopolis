@@ -14,7 +14,7 @@ class CityInfoRepository @Inject constructor(
 ) {
     suspend fun getCities(city: String): Resource<CitySearchResult> {
         val response = try {
-            api.getCity(city = city)
+             api.getCity(city = city)
         } catch (e: Exception) {
             return Resource.Failure(message = "Error occurred $e")
         }

@@ -1,26 +1,52 @@
 package com.infopolis.infopolis
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.infopolis.infopolis.data.model.CitiesListViewModel
+import com.infopolis.infopolis.data.model.CityDetailViewModel
 import com.infopolis.infopolis.ui.CityDetailScreen
 import com.infopolis.infopolis.ui.InfopolisUi
+import com.infopolis.infopolis.util.trimName
+import kotlinx.coroutines.FlowPreview
 
 const val CITY_LIST_SCREEN = "cities_list"
 const val CITY_DETAIL_SCREEN = "city_detail"
 const val CITY_NAME_ARG = "city_name"
 const val CITY_IMAGE_URL_ARG = "city_image_url"
 
+@OptIn(FlowPreview::class)
 @Composable
 fun NavigationGraph(navController: NavHostController) {
+    val citiesListViewModel = hiltViewModel<CitiesListViewModel>()
+    val textSearch by citiesListViewModel.textSearch.collectAsState()
+
+    val cities by citiesListViewModel.citiesList.collectAsState()
+    val favCities by citiesListViewModel.favoriteCities.collectAsState()
     NavHost(
         navController = navController,
         startDestination = CITY_LIST_SCREEN
     ) {
+
+        composable(
+            route = CITY_LIST_SCREEN
+        ) {
+
+            InfopolisUi(
+                viewModel = citiesListViewModel,
+                navController = navController,
+                textSearch = textSearch,
+                cities = cities,
+                favCities = favCities
+            )
+        }
+
         composable(
             route = "$CITY_DETAIL_SCREEN/{$CITY_NAME_ARG}/{$CITY_IMAGE_URL_ARG}",
             arguments = listOf(
@@ -33,18 +59,18 @@ fun NavigationGraph(navController: NavHostController) {
                     nullable = true
                 }
             )
-        ) {
-            CityDetailScreen(
-                cityName = it.arguments?.getString(CITY_NAME_ARG),
-                cityImageUrl = it.arguments?.getString(CITY_IMAGE_URL_ARG),
-                viewModel = hiltViewModel()
-            )
-        }
+        ) { backStackEntry ->
+            val cityName = backStackEntry.arguments?.getString(CITY_NAME_ARG)
+            val cityImageUrl = backStackEntry.arguments?.getString(CITY_IMAGE_URL_ARG)
 
-        composable(route = CITY_LIST_SCREEN) {
-            InfopolisUi(
-                citiesListViewModel = hiltViewModel(),
-                navController = navController,
+            val cityDetailViewModel = hiltViewModel<CityDetailViewModel>()
+
+            cityDetailViewModel.getCityScore(cityName?.trimName())
+
+            CityDetailScreen(
+                cityName = cityName,
+                cityImageUrl = cityImageUrl,
+                viewModel = cityDetailViewModel
             )
         }
     }

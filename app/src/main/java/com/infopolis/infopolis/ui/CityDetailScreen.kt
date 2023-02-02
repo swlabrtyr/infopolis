@@ -1,11 +1,17 @@
 package com.infopolis.infopolis.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Text
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -29,11 +35,13 @@ import com.infopolis.infopolis.util.trimName
 fun CityDetailScreen(
     viewModel: CityDetailViewModel,
     cityName: String?,
-    cityImageUrl: String? = null
+    cityImageUrl: String? = null,
 ) {
-    viewModel.getCityScore(cityName?.trimName())
     val cityScoreInfo by viewModel.cityScoreInfo.collectAsState()
     val scrollState = rememberScrollState()
+
+    viewModel.getCityScore(cityName?.trimName())
+
     Column(
         modifier = Modifier
             .fillMaxSize()
