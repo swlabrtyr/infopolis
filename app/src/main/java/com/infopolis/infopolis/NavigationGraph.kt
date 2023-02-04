@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.infopolis.infopolis.data.model.CitiesListViewModel
 import com.infopolis.infopolis.data.model.CityDetailViewModel
+import com.infopolis.infopolis.data.model.SearchViewModel
 import com.infopolis.infopolis.ui.CityDetailScreen
 import com.infopolis.infopolis.ui.InfopolisUi
 import com.infopolis.infopolis.util.trimName
@@ -24,11 +25,14 @@ const val CITY_IMAGE_URL_ARG = "city_image_url"
 @OptIn(FlowPreview::class)
 @Composable
 fun NavigationGraph(navController: NavHostController) {
-    val citiesListViewModel = hiltViewModel<CitiesListViewModel>()
-    val textSearch by citiesListViewModel.textSearch.collectAsState()
+    val searchViewModel =  hiltViewModel<SearchViewModel>()
 
-    val cities by citiesListViewModel.citiesList.collectAsState()
+    val citiesListViewModel = hiltViewModel<CitiesListViewModel>()
+    val textSearch by searchViewModel.textSearch.collectAsState()
+
+    val cities by searchViewModel.citiesList.collectAsState()
     val favCities by citiesListViewModel.favoriteCities.collectAsState()
+
     NavHost(
         navController = navController,
         startDestination = CITY_LIST_SCREEN
@@ -37,13 +41,13 @@ fun NavigationGraph(navController: NavHostController) {
         composable(
             route = CITY_LIST_SCREEN
         ) {
-
             InfopolisUi(
-                viewModel = citiesListViewModel,
                 navController = navController,
                 textSearch = textSearch,
                 cities = cities,
-                favCities = favCities
+                favCities = favCities,
+                toggleFavorite = citiesListViewModel::toggleCityFavorite,
+                citySearch = searchViewModel::searchCities
             )
         }
 
@@ -64,7 +68,6 @@ fun NavigationGraph(navController: NavHostController) {
             val cityImageUrl = backStackEntry.arguments?.getString(CITY_IMAGE_URL_ARG)
 
             val cityDetailViewModel = hiltViewModel<CityDetailViewModel>()
-
             cityDetailViewModel.getCityScore(cityName?.trimName())
 
             CityDetailScreen(

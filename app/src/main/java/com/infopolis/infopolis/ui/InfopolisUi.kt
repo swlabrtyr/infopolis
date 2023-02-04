@@ -1,8 +1,6 @@
 package com.infopolis.infopolis.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -26,20 +24,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.infopolis.infopolis.data.model.CitiesListViewModel
 import com.infopolis.infopolis.data.model.CityInfo
-import kotlinx.coroutines.FlowPreview
 
 
-@OptIn(FlowPreview::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InfopolisUi(
-    viewModel: CitiesListViewModel,
+    citySearch: (String) -> Unit,
+    toggleFavorite: (CityInfo) -> Unit,
     navController: NavController,
     textSearch: String,
     cities: List<CityInfo>?,
@@ -58,7 +54,7 @@ fun InfopolisUi(
                             .background(MaterialTheme.colorScheme.primary)
                             .padding(top = 10.dp)
                             .fillMaxWidth(),
-                        onChange = viewModel::searchCities,
+                        onChange = citySearch,
                         input = textSearch
                     )
                 }
@@ -107,7 +103,8 @@ fun InfopolisUi(
                     modifier = Modifier.padding(contentPadding),
                     cities = cities,
                     navController = navController,
-                    onFavorite = viewModel::toggleCityFavorite
+                    isFavoriteList = false,
+                    onFavorite = toggleFavorite
                 )
             }
         } else {
@@ -115,36 +112,8 @@ fun InfopolisUi(
                 modifier = Modifier.padding(contentPadding),
                 cities = favCities,
                 navController = navController,
-                onFavorite = { city ->
-                    // Animate city removal from favorites list
-                    city.isVisible.value = false
-                    viewModel.toggleCityFavorite(city)
-                })
-        }
-    }
-}
-
-@Composable
-fun CityTabList(
-    modifier: Modifier,
-    cities: List<CityInfo>?,
-    navController: NavController,
-    onFavorite: (CityInfo) -> Unit
-) {
-    Column(
-        modifier = modifier
-            .background(Color.White)
-            .padding(10.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceEvenly,
-    ) {
-        if (cities == null) {
-            CircularProgressIndicator()
-        } else {
-            CitiesList(
-                navController = navController,
-                cities = cities,
-                onFavorite = onFavorite
+                isFavoriteList = true,
+                onFavorite = toggleFavorite
             )
         }
     }

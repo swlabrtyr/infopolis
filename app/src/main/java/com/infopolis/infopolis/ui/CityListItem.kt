@@ -1,9 +1,5 @@
 package com.infopolis.infopolis.ui
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -45,91 +41,88 @@ fun CityListItem(
     modifier: Modifier = Modifier,
     name: String?,
     imageUrl: String?,
-    isVisible: Boolean,
     isFavorite: Boolean,
     onFavorite: () -> Unit,
     onSelect: () -> Unit
 ) {
     val currentContext = LocalContext.current
-    AnimatedVisibility(
-        visible = isVisible,
-        exit = slideOutVertically() + shrinkVertically() + fadeOut()
+    Surface(
+        modifier = Modifier.padding(vertical = 2.dp, horizontal = 0.dp),
+        shape = RoundedCornerShape(12.dp)
     ) {
-        Surface(shape = RoundedCornerShape(12.dp)) {
+        Row(
+            modifier = Modifier
+                .border(width = 1.dp, color = Color.Black, shape = RoundedCornerShape(12.dp))
+                .background(Color.Transparent)
+                .height(90.dp)
+                .fillMaxWidth()
+        ) {
             Row(
                 modifier = Modifier
-                    .border(width = 1.dp, color = Color.Black, shape = RoundedCornerShape(12.dp))
-                    .background(Color.Transparent)
-                    .height(90.dp)
-                    .fillMaxWidth()
+                    .clickable { onSelect() }
+                    .fillMaxWidth(fraction = 0.8f)
             ) {
-                Row(
+                SubcomposeAsyncImage(
+                    model = ImageRequest.Builder(currentContext)
+                        .data(imageUrl ?: Constants.IMAGE_URL)
+                        .crossfade(true)
+                        .crossfade(1000)
+                        .build(),
+                    loading = {
+                        CircularProgressIndicator()
+                    },
+                    contentDescription = "Picture of $name",
                     modifier = Modifier
-                        .clickable { onSelect() }
-                        .fillMaxWidth(fraction = 0.8f)
-                ) {
-                    SubcomposeAsyncImage(
-                        model = ImageRequest.Builder(currentContext)
-                            .data(imageUrl ?: Constants.IMAGE_URL)
-                            .crossfade(true)
-                            .crossfade(1000)
-                            .build(),
-                        loading = {
-                            CircularProgressIndicator()
-                        },
-                        contentDescription = "Picture of $name",
-                        modifier = Modifier
-                            .width(100.dp)
-                            .fillMaxHeight()
-                            .paddingFromBaseline(5.dp),
-                        contentScale = ContentScale.FillBounds,
-                    )
+                        .width(100.dp)
+                        .fillMaxHeight()
+                        .paddingFromBaseline(5.dp),
+                    contentScale = ContentScale.FillBounds,
+                )
 
-                    if (name != null) {
-                        Column(
-                            modifier
-                                .align(Alignment.CenterVertically)
-                                .fillMaxWidth()
-                                .padding(10.dp)
-                                .clip(RoundedCornerShape(topStart = 10.dp, bottomStart = 10.dp)),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.Start
-                        ) {
-                            Text(
-                                text = name,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = Color.Black,
-                                modifier = Modifier.padding(15.dp),
-                                maxLines = 2,
-                                overflow = TextOverflow.Ellipsis
-                            )
-                        }
+                if (name != null) {
+                    Column(
+                        modifier
+                            .align(Alignment.CenterVertically)
+                            .fillMaxWidth()
+                            .padding(10.dp)
+                            .clip(RoundedCornerShape(topStart = 10.dp, bottomStart = 10.dp)),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.Start
+                    ) {
+                        Text(
+                            text = name,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = Color.White,
+                            modifier = Modifier.padding(15.dp),
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis
+                        )
                     }
                 }
+            }
 
-                Box(
+            Box(
+                modifier = Modifier
+                    .background(color = Color.Transparent)
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+
+            ) {
+                Icon(
+                    if (isFavorite) {
+                        Icons.Default.Favorite
+                    } else {
+                        Icons.Default.FavoriteBorder
+                    },
+                    contentDescription = "Add city to list of favorites",
                     modifier = Modifier
-                        .background(color = Color.Transparent)
-                        .fillMaxWidth()
-                        .fillMaxHeight()
-
-                ) {
-                    Icon(
-                        if (isFavorite) {
-                            Icons.Default.Favorite
-                        } else {
-                            Icons.Default.FavoriteBorder
-                        },
-                        contentDescription = "Add city to list of favorites",
-                        modifier = Modifier
-                            .width(30.dp)
-                            .height(30.dp)
-                            .clickable {
-                                onFavorite()
-                            }
-                            .align(Center)
-                    )
-                }
+                        .width(30.dp)
+                        .height(30.dp)
+                        .clickable {
+                            onFavorite()
+                        }
+                        .align(Center)
+                )
             }
         }
     }
