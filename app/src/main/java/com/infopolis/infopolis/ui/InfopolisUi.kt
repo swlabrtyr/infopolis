@@ -22,7 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,7 +41,7 @@ fun InfopolisUi(
     cities: List<CityInfo>?,
     favCities: List<CityInfo>?
 ) {
-    var selectedBottomTab by remember { mutableStateOf(0) }
+    var selectedBottomTab by rememberSaveable { mutableStateOf(0) }
     val bottomNavTabs = listOf("Cities", "Favorites")
 
     Scaffold(
