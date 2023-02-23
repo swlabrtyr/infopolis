@@ -1,112 +1,97 @@
 package com.infopolis.infopolis.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.border
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusState
-import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
-fun test_TextSearch(input: String): Unit {}
-@Preview
-@Composable
-fun SearchViewPreview() {
-    SearchBar(
-        modifier = Modifier
-            .background(MaterialTheme.colorScheme.primary)
-            .padding(10.dp)
-            .fillMaxWidth(),
-        onChange = {test_TextSearch("")},
-        input = "Hello"
-    )
-}
-@Composable
-fun SearchInput(
-    onInput: () -> String,
-    onChange: (String) -> Unit,
-    hint: (FocusState) -> Unit,
-) {
-    BasicTextField(
-        modifier = Modifier
-            .fillMaxWidth()
-            .onFocusChanged {
-                hint(it)
-            }
-            .padding(horizontal = 10.dp),
-        value = onInput(),
-        onValueChange = onChange,
-        maxLines = 1,
-        singleLine = true,
-        cursorBrush = SolidColor(Color.White),
-        textStyle = TextStyle(color = Color.White, textAlign = TextAlign.Left),
-    )
-}
 @Composable
 fun SearchBar(
-    modifier: Modifier = Modifier,
     input: String,
-    onChange: (String) -> Unit
+    onChange: (String) -> Unit,
 ) {
-    Row(
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier
+
+    val interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+    val focusRequester = remember {
+        FocusRequester()
+    }
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 20.dp, vertical = 20.dp)
+            .background(color = MaterialTheme.colorScheme.onPrimary)
+            .border(
+                width = 1.dp,
+                brush = Brush.horizontalGradient(
+                    colors = listOf(
+                        MaterialTheme.colorScheme.primary,
+                        MaterialTheme.colorScheme.secondary
+                    )
+                ),
+                shape = CircleShape
+            )
+            .shadow(
+                ambientColor = MaterialTheme.colorScheme.primary,
+                spotColor = MaterialTheme.colorScheme.secondary,
+                elevation = if (isFocused) 15.dp else 0.dp,
+                clip = true,
+                shape = CircleShape
+            ),
+        shape = CircleShape
     ) {
-
-        var hint by rememberSaveable { mutableStateOf("") }
-        Icon(
-            Icons.Default.Search,
-            contentDescription = "Search icon",
-            modifier = Modifier
-                .width(20.dp)
-                .height(20.dp)
-                ,
-            tint = Color.White,
-        )
-
-        Box {
-            SearchInput(
-                onInput = { input },
-                onChange = onChange,
-                hint = {
-                    hint = if (it.isFocused) {
-                        ""
-                    } else {
-                        "Search.."
-                    }
-                }
+        Row(
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.background(color = MaterialTheme.colorScheme.onPrimary)
+        ) {
+            Icon(
+                modifier = Modifier
+                    .padding(horizontal = 20.dp)
+                    .size(35.dp),
+                imageVector = Icons.Default.Search,
+                contentDescription = "Search icon",
+                tint = MaterialTheme.colorScheme.primary,
             )
 
-            if (input.isEmpty()) {
-                Text(
-                    text = hint,
-                    color = Color.LightGray,
-                    textAlign = TextAlign.Center
-                )
-            }
+            BasicTextField(
+                value = input,
+                onValueChange = onChange,
+                interactionSource = interactionSource,
+                textStyle = TextStyle(
+                    textAlign = TextAlign.Start,
+                    color = MaterialTheme.colorScheme.onSecondary,
+                    fontSize = 20.sp
+                ),
+                cursorBrush = SolidColor(MaterialTheme.colorScheme.onSecondary),
+                modifier = Modifier
+                    .height(50.dp)
+                    .fillMaxWidth()
+                    .background(color = MaterialTheme.colorScheme.onPrimary)
+                    .offset(y = 10.dp)
+                    .focusRequester(focusRequester),
+            )
         }
     }
 }

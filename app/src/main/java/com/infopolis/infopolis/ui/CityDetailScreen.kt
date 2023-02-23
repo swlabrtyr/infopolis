@@ -1,23 +1,17 @@
 package com.infopolis.infopolis.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
@@ -45,7 +39,7 @@ fun CityDetailScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.Black)
+            .background(MaterialTheme.colorScheme.background)
             .padding(bottom = 16.dp)
             .verticalScroll(scrollState),
         verticalArrangement = Arrangement.Top,
@@ -79,7 +73,7 @@ fun CityDetailScreen(
             cityName?.let {
                 Text(
                     text = it,
-                    color = Color.White,
+                    color = MaterialTheme.colorScheme.primary,
                     fontSize = 20.sp,
                     textAlign = TextAlign.Left,
                 )
@@ -93,7 +87,7 @@ fun CityDetailScreen(
                 Text(
                     modifier = Modifier.padding(15.dp),
                     text = cityScoreInfo?.summary.toString().formatText(),
-                    color = Color.White
+                    color = MaterialTheme.colorScheme.primary
                 )
             }
         }
@@ -116,7 +110,7 @@ fun ScoreList(
                     .padding(horizontal = 15.dp),
                 text = category.name,
                 fontSize = 30.sp,
-                color = Color.White,
+                color = MaterialTheme.colorScheme.secondary,
                 textAlign = TextAlign.Left
             )
             Text(
@@ -124,7 +118,7 @@ fun ScoreList(
                     .fillMaxWidth()
                     .padding(15.dp),
                 text = category.score_out_of_10.toString(),
-                color = Color.White,
+                color = MaterialTheme.colorScheme.onSecondary,
                 textAlign = TextAlign.Left
             )
         }

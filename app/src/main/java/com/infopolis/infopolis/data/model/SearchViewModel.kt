@@ -8,18 +8,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
-class SearchViewModel @Inject constructor(private val repository: CityInfoRepository) : ViewModel() {
+class SearchViewModel @Inject constructor(private val repository: CityInfoRepository) :
+    ViewModel() {
 
     private val _textSearch = MutableStateFlow("")
     val textSearch: StateFlow<String> = _textSearch.asStateFlow()
@@ -27,6 +22,10 @@ class SearchViewModel @Inject constructor(private val repository: CityInfoReposi
     fun searchCities(searchInput: String) {
         _textSearch.value = searchInput
     }
+
+    // space will return the default list of cities
+    @OptIn(FlowPreview::class)
+    val defaultCities = fetchCities(textSearch = MutableStateFlow(" "))
 
     @FlowPreview
     fun fetchCities(textSearch: StateFlow<String>): StateFlow<List<CityInfo>?> {

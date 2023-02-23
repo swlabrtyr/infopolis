@@ -1,8 +1,6 @@
 package com.infopolis.infopolis
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -33,6 +31,8 @@ fun NavigationGraph(navController: NavHostController) {
     val cities by searchViewModel.citiesList.collectAsState()
     val favCities by citiesListViewModel.favoriteCities.collectAsState()
 
+    val defaultCities by searchViewModel.defaultCities.collectAsState()
+
     NavHost(
         navController = navController,
         startDestination = CITY_LIST_SCREEN
@@ -45,9 +45,10 @@ fun NavigationGraph(navController: NavHostController) {
                 navController = navController,
                 textSearch = textSearch,
                 cities = cities,
+                defaultCities = defaultCities,
                 favCities = favCities,
                 toggleFavorite = citiesListViewModel::toggleCityFavorite,
-                citySearch = searchViewModel::searchCities
+                citySearch = searchViewModel::searchCities,
             )
         }
 

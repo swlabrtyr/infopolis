@@ -3,21 +3,11 @@ package com.infopolis.infopolis.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.paddingFromBaseline
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -35,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.infopolis.infopolis.util.Constants
+import com.infopolis.infopolis.util.shimmerBackground
 
 @Composable
 fun CityListItem(
@@ -47,12 +38,12 @@ fun CityListItem(
 ) {
     val currentContext = LocalContext.current
     Surface(
-        modifier = Modifier.padding(vertical = 2.dp, horizontal = 0.dp),
+        modifier = Modifier.padding(vertical = 3.dp, horizontal = 0.dp),
         shape = RoundedCornerShape(12.dp)
     ) {
         Row(
             modifier = Modifier
-                .border(width = 1.dp, color = Color.Black, shape = RoundedCornerShape(12.dp))
+                .border(width = 1.dp, color = MaterialTheme.colorScheme.secondary, shape = RoundedCornerShape(12.dp))
                 .background(Color.Transparent)
                 .height(90.dp)
                 .fillMaxWidth()
@@ -69,7 +60,11 @@ fun CityListItem(
                         .crossfade(1000)
                         .build(),
                     loading = {
-                        CircularProgressIndicator()
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .shimmerBackground()
+                        )
                     },
                     contentDescription = "Picture of $name",
                     modifier = Modifier
@@ -92,7 +87,7 @@ fun CityListItem(
                         Text(
                             text = name,
                             style = MaterialTheme.typography.bodyMedium,
-                            color = Color.White,
+                            color = MaterialTheme.colorScheme.onSecondary,
                             modifier = Modifier.padding(15.dp),
                             maxLines = 2,
                             overflow = TextOverflow.Ellipsis
@@ -114,14 +109,15 @@ fun CityListItem(
                     } else {
                         Icons.Default.FavoriteBorder
                     },
-                    contentDescription = "Add city to list of favorites",
-                    modifier = Modifier
-                        .width(30.dp)
-                        .height(30.dp)
-                        .clickable {
-                            onFavorite()
-                        }
-                        .align(Center)
+                    tint = MaterialTheme.colorScheme.primary,
+                contentDescription = "Add city to list of favorites",
+                modifier = Modifier
+                    .width(30.dp)
+                    .height(30.dp)
+                    .clickable {
+                        onFavorite()
+                    }
+                    .align(Center)
                 )
             }
         }
