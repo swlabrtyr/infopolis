@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.infopolis.infopolis.AppState
 import com.infopolis.infopolis.data.model.CityInfo
 
 
@@ -36,11 +37,13 @@ fun InfopolisUi(
     textSearch: String,
     cities: List<CityInfo>?,
     favCities: List<CityInfo>?,
+    toggleDefaults: () -> Unit,
+    showDefaults: Boolean = false,
+    appState: AppState = AppState.Empty
 ) {
     val bottomNavTabs = listOf("Cities", "Favorites")
     var selectedBottomTab by rememberSaveable { mutableStateOf(0) }
 
-    var showDefaults by remember { mutableStateOf(false) }
     val scrollBehavior = exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
     Scaffold(
@@ -125,7 +128,7 @@ fun InfopolisUi(
                 ) {
                     item {
                         Button(
-                            onClick = { showDefaults = true },
+                            onClick = { toggleDefaults() },
                         ) {
                             Text(
                                 text = "Take me somewhere",
@@ -137,18 +140,22 @@ fun InfopolisUi(
                     }
                 }
                 if (showDefaults) {
-                    CityTabList(
-                        modifier = Modifier.padding(
-                            top = contentPadding.calculateTopPadding(),
-                            start = 10.dp,
-                            end = 10.dp,
-                            bottom = 80.dp
-                        ),
-                        cities = defaultCities,
-                        navController = navController,
-                        isFavoriteList = false,
-                        onFavorite = toggleFavorite
-                    )
+                    if (defaultCities.isNullOrEmpty()){
+                        CircularProgressIndicator()
+                    } else {
+                        CityTabList(
+                            modifier = Modifier.padding(
+                                top = contentPadding.calculateTopPadding(),
+                                start = 10.dp,
+                                end = 10.dp,
+                                bottom = 80.dp
+                            ),
+                            cities = defaultCities,
+                            navController = navController,
+                            isFavoriteList = false,
+                            onFavorite = toggleFavorite
+                        )
+                    }
                 }
             } else {
                 CityTabList(

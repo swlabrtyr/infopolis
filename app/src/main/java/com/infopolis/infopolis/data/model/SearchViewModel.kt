@@ -58,9 +58,6 @@ class SearchViewModel @Inject constructor(private val repository: CityInfoReposi
                     CityInfo(name.matching_full_name, url)
                 }
             }
-            .map { cities ->
-                cities?.filter { city -> city.imageUrl != null }
-            }
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), initialValue = listOf())
     }
 

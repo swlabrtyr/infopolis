@@ -20,18 +20,29 @@ const val CITY_DETAIL_SCREEN = "city_detail"
 const val CITY_NAME_ARG = "city_name"
 const val CITY_IMAGE_URL_ARG = "city_image_url"
 
+enum class AppState {
+    Empty,
+    DefaultList,
+    SearchList,
+    FavoritesList
+}
+
+
 @OptIn(FlowPreview::class)
 @Composable
 fun NavigationGraph(navController: NavHostController) {
-    val searchViewModel =  hiltViewModel<SearchViewModel>()
+    val searchViewModel = hiltViewModel<SearchViewModel>()
 
+    val cityDetailViewModel = hiltViewModel<CityDetailViewModel>()
     val citiesListViewModel = hiltViewModel<CitiesListViewModel>()
+
     val textSearch by searchViewModel.textSearch.collectAsState()
-
     val cities by searchViewModel.citiesList.collectAsState()
-    val favCities by citiesListViewModel.favoriteCities.collectAsState()
 
+    val favCities by citiesListViewModel.favoriteCities.collectAsState()
     val defaultCities by searchViewModel.defaultCities.collectAsState()
+
+    var showDefaults by remember { mutableStateOf(false) }
 
     NavHost(
         navController = navController,
@@ -46,7 +57,9 @@ fun NavigationGraph(navController: NavHostController) {
                 textSearch = textSearch,
                 cities = cities,
                 defaultCities = defaultCities,
+                showDefaults = showDefaults,
                 favCities = favCities,
+                toggleDefaults = { showDefaults = !showDefaults },
                 toggleFavorite = citiesListViewModel::toggleCityFavorite,
                 citySearch = searchViewModel::searchCities,
             )
@@ -68,9 +81,7 @@ fun NavigationGraph(navController: NavHostController) {
             val cityName = backStackEntry.arguments?.getString(CITY_NAME_ARG)
             val cityImageUrl = backStackEntry.arguments?.getString(CITY_IMAGE_URL_ARG)
 
-            val cityDetailViewModel = hiltViewModel<CityDetailViewModel>()
             cityDetailViewModel.getCityScore(cityName?.trimName())
-
             CityDetailScreen(
                 cityName = cityName,
                 cityImageUrl = cityImageUrl,
