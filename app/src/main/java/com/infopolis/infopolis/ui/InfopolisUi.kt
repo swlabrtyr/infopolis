@@ -1,6 +1,7 @@
 package com.infopolis.infopolis.ui
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,7 +12,7 @@ import androidx.compose.material.ripple.LocalRippleTheme
 import androidx.compose.material.ripple.RippleAlpha
 import androidx.compose.material.ripple.RippleTheme
 import androidx.compose.material3.*
-import androidx.compose.material3.TopAppBarDefaults.exitUntilCollapsedScrollBehavior
+import androidx.compose.material3.TopAppBarDefaults.enterAlwaysScrollBehavior
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -44,7 +45,9 @@ fun InfopolisUi(
     val bottomNavTabs = listOf("Cities", "Favorites")
     var selectedBottomTab by rememberSaveable { mutableStateOf(0) }
 
-    val scrollBehavior = exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
+    val scrollBehavior = enterAlwaysScrollBehavior(rememberTopAppBarState())
+    val isCollapsed = remember { derivedStateOf { scrollBehavior.state.collapsedFraction < 1.0 } }
+
 
     Scaffold(
         modifier = Modifier
@@ -55,10 +58,16 @@ fun InfopolisUi(
             if (selectedBottomTab == 0) {
                 CenterAlignedTopAppBar(
                     title = {
-                        SearchBar(
-                            input = textSearch,
-                            onChange = citySearch,
-                        )
+                        AnimatedVisibility(
+                            visible = isCollapsed.value,
+                            enter = slideInVertically() + fadeIn(),
+                            exit = slideOutVertically() + fadeOut()
+                        ) {
+                            SearchBar(
+                                input = textSearch,
+                                onChange = citySearch,
+                            )
+                        }
                     },
                     colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
                         containerColor = MaterialTheme.colorScheme.onPrimary
