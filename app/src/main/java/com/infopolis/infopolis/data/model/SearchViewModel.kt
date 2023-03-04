@@ -34,15 +34,20 @@ class SearchViewModel @Inject constructor(private val repository: CityInfoReposi
             .map { searchInput ->
                 // Do not return the default list of cities if no user input
                 if (searchInput == "") return@map listOf()
-                val results = repository.getCities(searchInput).data
+
+                val results = repository.getCities(searchInput)
+                    .data
                     ?._embedded
                     ?.citySearchResults
 
-                val nameList = results?.map { result ->
-                    withContext(viewModelScope.coroutineContext) {
-                        result.matching_full_name.trimName()
+                val nameList = results
+                    ?.distinct()
+                    ?.map { result ->
+                        withContext(viewModelScope.coroutineContext) {
+                            result.matching_full_name.trimName()
+                        }
                     }
-                }.orEmpty()
+                    .orEmpty()
 
                 val imageRequests = nameList.map { name ->
                     viewModelScope.async {
@@ -54,7 +59,7 @@ class SearchViewModel @Inject constructor(private val repository: CityInfoReposi
                     }
                 }.awaitAll()
 
-                results?.zip(imageRequests)?.map { (name, url) ->
+                 results?.zip(imageRequests)?.map { (name, url) ->
                     CityInfo(name.matching_full_name, url)
                 }
             }
