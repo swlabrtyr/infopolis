@@ -44,7 +44,7 @@ fun CityListItem(
         Row(
             modifier = Modifier
                 .border(width = 1.dp, color = MaterialTheme.colorScheme.secondary, shape = RoundedCornerShape(12.dp))
-                .background(Color.Transparent)
+                .background(MaterialTheme.colorScheme.background)
                 .height(90.dp)
                 .fillMaxWidth()
         ) {

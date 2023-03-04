@@ -40,13 +40,12 @@ class SearchViewModel @Inject constructor(private val repository: CityInfoReposi
                     ?._embedded
                     ?.citySearchResults
 
-                val nameList = results
-                    ?.distinct()
-                    ?.map { result ->
-                        withContext(viewModelScope.coroutineContext) {
-                            result.matching_full_name.trimName()
-                        }
+                val nameList = results?.map { result ->
+                    withContext(viewModelScope.coroutineContext) {
+                        result.matching_full_name.trimName()
                     }
+                }
+                    ?.distinct()
                     .orEmpty()
 
                 val imageRequests = nameList.map { name ->
