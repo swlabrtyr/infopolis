@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
@@ -43,7 +44,11 @@ fun CityListItem(
     ) {
         Row(
             modifier = Modifier
-                .border(width = 1.dp, color = MaterialTheme.colorScheme.secondary, shape = RoundedCornerShape(12.dp))
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.secondary,
+                    shape = RoundedCornerShape(12.dp)
+                )
                 .background(Color.Transparent)
                 .height(90.dp)
                 .fillMaxWidth()
@@ -110,16 +115,29 @@ fun CityListItem(
                         Icons.Default.FavoriteBorder
                     },
                     tint = MaterialTheme.colorScheme.primary,
-                contentDescription = "Add city to list of favorites",
-                modifier = Modifier
-                    .width(30.dp)
-                    .height(30.dp)
-                    .clickable {
-                        onFavorite()
-                    }
-                    .align(Center)
+                    contentDescription = "Add city to list of favorites",
+                    modifier = Modifier
+                        .width(30.dp)
+                        .height(30.dp)
+                        .clickable {
+                            onFavorite()
+                        }
+                        .align(Center)
                 )
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun CityListItem_Preview() {
+    CityListItem(
+        modifier = Modifier,
+        name = "New Orleans",
+        imageUrl = Constants.IMAGE_URL,
+        isFavorite = true,
+        onFavorite = {},
+        onSelect = {}
+    )
 }

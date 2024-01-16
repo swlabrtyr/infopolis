@@ -1,12 +1,22 @@
 package com.infopolis.infopolis
 
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import coil.compose.SubcomposeAsyncImage
+import coil.request.ImageRequest
 import com.infopolis.infopolis.data.model.CitiesListViewModel
 import com.infopolis.infopolis.data.model.CityDetailViewModel
 import com.infopolis.infopolis.data.model.SearchViewModel
@@ -20,13 +30,6 @@ const val CITY_DETAIL_SCREEN = "city_detail"
 const val CITY_NAME_ARG = "city_name"
 const val CITY_IMAGE_URL_ARG = "city_image_url"
 
-enum class AppState {
-    Empty,
-    DefaultList,
-    SearchList,
-    FavoritesList
-}
-
 
 @OptIn(FlowPreview::class)
 @Composable
@@ -36,11 +39,11 @@ fun NavigationGraph(navController: NavHostController) {
     val cityDetailViewModel = hiltViewModel<CityDetailViewModel>()
     val citiesListViewModel = hiltViewModel<CitiesListViewModel>()
 
-    val textSearch by searchViewModel.textSearch.collectAsState()
-    val cities by searchViewModel.citiesList.collectAsState()
+    val textSearch by searchViewModel.textSearch.collectAsStateWithLifecycle()
+    val cities by searchViewModel.citiesList.collectAsStateWithLifecycle()
 
-    val favCities by citiesListViewModel.favoriteCities.collectAsState()
-    val defaultCities by searchViewModel.defaultCities.collectAsState()
+    val favCities by citiesListViewModel.favoriteCities.collectAsStateWithLifecycle()
+    val defaultCities by searchViewModel.defaultCities.collectAsStateWithLifecycle()
 
     var showDefaults by remember { mutableStateOf(false) }
 
@@ -48,7 +51,6 @@ fun NavigationGraph(navController: NavHostController) {
         navController = navController,
         startDestination = CITY_LIST_SCREEN
     ) {
-
         composable(
             route = CITY_LIST_SCREEN
         ) {
@@ -64,7 +66,6 @@ fun NavigationGraph(navController: NavHostController) {
                 citySearch = searchViewModel::searchCities,
             )
         }
-
         composable(
             route = "$CITY_DETAIL_SCREEN/{$CITY_NAME_ARG}/{$CITY_IMAGE_URL_ARG}",
             arguments = listOf(
@@ -80,13 +81,30 @@ fun NavigationGraph(navController: NavHostController) {
         ) { backStackEntry ->
             val cityName = backStackEntry.arguments?.getString(CITY_NAME_ARG)
             val cityImageUrl = backStackEntry.arguments?.getString(CITY_IMAGE_URL_ARG)
+            val cityScoreInfo by cityDetailViewModel.cityScoreInfo.collectAsStateWithLifecycle()
 
             cityDetailViewModel.getCityScore(cityName?.trimName())
             CityDetailScreen(
+                cityScoreInfo = cityScoreInfo,
                 cityName = cityName,
-                cityImageUrl = cityImageUrl,
-                viewModel = cityDetailViewModel
-            )
+            ) {
+                SubcomposeAsyncImage(
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(cityImageUrl)
+                        .crossfade(true)
+                        .crossfade(1000)
+                        .error(R.drawable.ic_launcher_background)
+                        .build(),
+                    loading = {
+                        CircularProgressIndicator()
+                    },
+                    contentDescription = "Information about Metropolis",
+                    modifier = Modifier
+                        .size(500.dp)
+                        .align(Alignment.CenterVertically),
+                    contentScale = ContentScale.FillBounds,
+                )
+            }
         }
     }
 }

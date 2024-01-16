@@ -23,7 +23,6 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.infopolis.infopolis.AppState
 import com.infopolis.infopolis.data.model.CityInfo
 
 
@@ -40,14 +39,12 @@ fun InfopolisUi(
     favCities: List<CityInfo>?,
     toggleDefaults: () -> Unit,
     showDefaults: Boolean = false,
-    appState: AppState = AppState.Empty
 ) {
     val bottomNavTabs = listOf("Cities", "Favorites")
-    var selectedBottomTab by rememberSaveable { mutableStateOf(0) }
+    var selectedBottomTab by rememberSaveable { mutableIntStateOf(0) }
 
     val scrollBehavior = enterAlwaysScrollBehavior(rememberTopAppBarState())
     val isCollapsed = remember { derivedStateOf { scrollBehavior.state.collapsedFraction < 1.0 } }
-
 
     Scaffold(
         modifier = Modifier

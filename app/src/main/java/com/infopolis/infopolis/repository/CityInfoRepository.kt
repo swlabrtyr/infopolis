@@ -21,7 +21,7 @@ class CityInfoRepository @Inject constructor(
         return Resource.Success(response)
     }
 
-    suspend fun getCityImage(city: String?): Resource<CityImageInfo> {
+    suspend fun getCityImage(city: String): Resource<CityImageInfo> {
         val response = try {
             api.getImageUrl(city = city)
         } catch (e: Exception) {

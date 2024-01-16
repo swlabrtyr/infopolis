@@ -8,34 +8,29 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.base.R
+import com.infopolis.infopolis.R
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
-import com.infopolis.infopolis.data.model.CityDetailViewModel
+import com.infopolis.infopolis.data.remote.response.CityScoreInfo
 import com.infopolis.infopolis.data.remote.response.ScoreCategory
+import com.infopolis.infopolis.util.Constants.IMAGE_URL
 import com.infopolis.infopolis.util.formatText
-import com.infopolis.infopolis.util.trimName
 
 @Composable
 fun CityDetailScreen(
-    viewModel: CityDetailViewModel,
+    cityScoreInfo: CityScoreInfo?,
     cityName: String?,
-    cityImageUrl: String? = null,
+    image: @Composable RowScope.() -> Unit,
 ) {
-    val cityScoreInfo by viewModel.cityScoreInfo.collectAsState()
     val scrollState = rememberScrollState()
-
-    viewModel.getCityScore(cityName?.trimName())
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -47,22 +42,7 @@ fun CityDetailScreen(
 
     ) {
         Row {
-            SubcomposeAsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(cityImageUrl)
-                    .crossfade(true)
-                    .crossfade(1000)
-                    .error(R.drawable.ic_100tb)
-                    .build(),
-                loading = {
-                    CircularProgressIndicator()
-                },
-                contentDescription = "Information about $cityName",
-                modifier = Modifier
-                    .size(500.dp)
-                    .align(Alignment.CenterVertically),
-                contentScale = ContentScale.FillBounds,
-            )
+            image()
         }
 
         Row(
@@ -122,5 +102,32 @@ fun ScoreList(
                 textAlign = TextAlign.Left
             )
         }
+    }
+}
+
+
+@Preview
+@Composable
+fun CityDetailScreen_Preview() {
+    CityDetailScreen(
+        cityName = "Metropolis",
+        cityScoreInfo = CityScoreInfo(summary = "Lorem Ipsum Doler"),
+    ) {
+        SubcomposeAsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(IMAGE_URL)
+                .crossfade(true)
+                .crossfade(1000)
+                .error(R.drawable.ic_launcher_background)
+                .build(),
+            loading = {
+                CircularProgressIndicator()
+            },
+            contentDescription = "Information about Metropolis",
+            modifier = Modifier
+                .size(500.dp)
+                .align(Alignment.CenterVertically),
+            contentScale = ContentScale.FillBounds,
+        )
     }
 }

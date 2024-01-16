@@ -10,6 +10,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -48,6 +49,7 @@ class SearchViewModel @Inject constructor(private val repository: CityInfoReposi
                         }
                     }
                     .orEmpty()
+                Timber.i("::NAME_LIST $nameList")
 
                 val imageRequests = nameList.map { name ->
                     viewModelScope.async {
